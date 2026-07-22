@@ -182,7 +182,24 @@ img{max-width:100%;display:block}
     .nav-toggle{display:flex;z-index:1001}
     .hero{padding:100px 0 60px}
     .section{padding:60px 0}
-    .pricing-card{min-width:280px;flex-shrink:0}
+    .services-grid{grid-template-columns:1fr 1fr;gap:16px}
+    .service-card{padding:24px 20px}
+    .service-card h3{font-size:1.05rem}
+    .service-card p{font-size:0.82rem}
+    .service-icon{width:44px;height:44px;font-size:1.2rem;margin-bottom:14px}
+    .pricing-grid{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:16px;padding:8px 4px 20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--primary) transparent}
+    .pricing-grid::-webkit-scrollbar{height:4px}
+    .pricing-grid::-webkit-scrollbar-thumb{background:var(--primary);border-radius:4px}
+    .pricing-card{min-width:260px;flex-shrink:0;padding:28px 24px;scroll-snap-align:start}
+    .pricing-card.featured{transform:scale(1)}
+    .pricing-card.featured:hover{transform:translateY(-6px)}
+    .pricing-price{font-size:2.2rem}
+    .pricing-price .currency{font-size:1.1rem}
+    .pricing-desc{font-size:0.82rem;margin-bottom:20px;padding-bottom:20px}
+    .pricing-features{gap:10px}
+    .pricing-features li{font-size:0.8rem}
+    .pricing-name{font-size:0.85rem}
+    .pricing-btn{padding:12px;font-size:0.85rem}
     .cart-drawer{width:100vw;right:-100vw}
     .questionnaire-modal{padding:32px 24px}
     .form-row{grid-template-columns:1fr}
@@ -191,10 +208,17 @@ img{max-width:100%;display:block}
 }
 @media(max-width:480px){
     .hero h1{font-size:2rem}
+    .services-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .service-card{padding:18px 14px}
+    .service-card h3{font-size:0.95rem}
+    .service-card p{font-size:0.75rem;line-height:1.5}
+    .service-icon{width:36px;height:36px;font-size:1rem;margin-bottom:10px;border-radius:10px}
     .pricing-price{font-size:2rem}
-    .pricing-card{padding:24px 20px}
+    .pricing-card{padding:24px 20px;min-width:220px}
     .pricing-card.featured .pricing-badge{right:16px;font-size:0.65rem;padding:4px 12px}
     .pricing-features li{font-size:0.8rem}
+    .pricing-card .pricing-features li{font-size:0.75rem}
+    .pricing-btn{padding:10px;font-size:0.8rem}
 }
 
 /* ===== STRIPE CARD ===== */
