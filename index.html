@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DevCore - Professzionális weboldal megoldások 29.999 Ft-tól">
+    <title>DevCore | Weboldal megoldások</title>
+    <link rel="icon" type="image/jpeg" href="logo2.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="style.css"></noscript>
+    <!-- EmailJS defer -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Stripe defer -->
+    <script defer src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+    <!-- BG -->
+    <div class="bg-grid"></div>
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="logo2.jpg" alt="DevCore Logo" width="36" height="36" style="border-radius:10px;object-fit:cover;">
+                Dev<span>Core</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menü">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#services">Szolgáltatások</a></li>
+                <li><a href="#pricing">Árazás</a></li>
+                <li>
+                    <button class="cart-btn" id="cartToggle" aria-label="Kosár">
+                        🛒 <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- CART DRAWER -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3>🛒 Kosár</h3>
+            <button class="cart-close" id="cartClose">✕</button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <div class="cart-empty">A kosár üres.<br>Válassz egy csomagot!</div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-total">
+                <span>Összesen:</span>
+                <span id="cartTotalPrice">0 Ft</span>
+            </div>
+            <button class="cart-checkout-btn" id="checkoutBtn">Tovább a kérdőívhez →</button>
+        </div>
+    </div>
+
+    <!-- QUESTIONNAIRE MODAL -->
+    <div class="questionnaire-overlay" id="questionnaireOverlay">
+        <div class="questionnaire-modal">
+            <button class="close-q" id="closeQuestionnaire">✕</button>
+            <h2>📋 Weboldal igényfelmérés</h2>
+            <p class="sub">Kérlek töltsd ki az alábbi kérdőívet, hogy minél pontosabban tudjuk elkészíteni a weboldaladat!</p>
+
+            <form id="orderForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Név *</label>
+                        <input type="text" name="name" required autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" required autocomplete="email">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Telefonszám</label>
+                        <input type="tel" name="phone" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label>Weboldal típusa *</label>
+                        <select name="type" required>
+                            <option value="">Válassz...</option>
+                            <option>Bemutatkozó oldal</option>
+                            <option>Blog</option>
+                            <option>Webshop</option>
+                            <option>Portfólió</option>
+                            <option>Landing page</option>
+                            <option>Egyéb</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Becsült oldalszám *</label>
+                        <select name="pages" required>
+                            <option value="">Válassz...</option>
+                            <option>1 oldal</option>
+                            <option>2-3 oldal</option>
+                            <option>4-5 oldal</option>
+                            <option>5-10 oldal</option>
+                            <option>10+ oldal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Design stílus *</label>
+                        <select name="style" required>
+                            <option value="">Válassz...</option>
+                            <option>Modern</option>
+                            <option>Minimalista</option>
+                            <option>Klasszikus</option>
+                            <option>Kreatív / Egyedi</option>
+                            <option>Letisztult, professzionális</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Színvilág / Referencia oldalak</label>
+                    <input type="text" name="colors" placeholder="Pl. kék-fehér, sötét téma, vagy link hasonló oldalakra...">
+                </div>
+                <div class="form-group">
+                    <label>Kért funkciók</label>
+                    <div class="checkbox-grid">
+                        <label><input type="checkbox" name="features" value="Kapcsolati űrlap"> Kapcsolati űrlap</label>
+                        <label><input type="checkbox" name="features" value="Képgaléria"> Képgaléria</label>
+                        <label><input type="checkbox" name="features" value="Blog"> Blog modul</label>
+                        <label><input type="checkbox" name="features" value="Webshop"> Webshop</label>
+                        <label><input type="checkbox" name="features" value="Admin felület"> Admin felület</label>
+                        <label><input type="checkbox" name="features" value="Többnyelvű"> Többnyelvű oldal</label>
+                        <label><input type="checkbox" name="features" value="Hírlevél"> Hírlevél feliratkozás</label>
+                        <label><input type="checkbox" name="features" value="SEO"> SEO optimalizálás</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Egyéb igények, megjegyzések</label>
+                    <textarea name="notes" placeholder="Írd le részletesen, hogy milyen weboldalt szeretnél, mire használnád, van-e konkrét elképzelésed..."></textarea>
+                </div>
+
+                <div class="form-group" style="background:var(--dark-3);padding:16px;border-radius:12px;border:1px solid var(--border);">
+                    <label style="margin:0 0 8px;">Kiválasztott csomag(ok)</label>
+                    <div id="orderSummary" style="font-size:0.9rem;color:var(--text-muted);"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Fizetési mód *</label>
+                    <div class="payment-options">
+                        <button type="button" class="payment-option" data-value="Banki átutalás">🏦 Banki átutalás</button>
+                        <button type="button" class="payment-option" data-value="2 részletben" style="display:inline-flex;align-items:center;gap:6px;">
+                            2 részletben
+                            <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--primary);color:#fff;font-size:0.65rem;font-weight:700;cursor:help;flex-shrink:0;" title="Előlegként a kiválasztott csomag árának 50%-át kell kifizetni, a fennmaradó 50%-ot pedig akkor, amikor elkészült a weboldal és átadjuk.">i</span>
+                        </button>
+                        <button type="button" class="payment-option payment-card" data-value="Kártya (Stripe)">💳 Kártya (Stripe)</button>
+                    </div>
+                    <input type="hidden" name="payment" id="paymentInput" required>
+                    <div id="stripePaymentSection" style="display:none;margin-top:16px;padding:16px;background:var(--dark-3);border-radius:12px;border:1px solid var(--border);">
+                        <label style="margin-bottom:10px;">💳 Kártya adatok (teszt mód)</label>
+                        <div id="stripeCardElement" style="padding:14px;background:var(--dark);border-radius:8px;border:1px solid var(--border);"></div>
+                        <p style="color:var(--text-muted);font-size:0.75rem;margin-top:8px;">
+                            Teszt kártya: <code style="background:var(--dark-2);padding:2px 6px;border-radius:4px;">4242 4242 4242 4242</code> | Bármilyen jövőbeli dátum + CVC
+                        </p>
+                        <div id="stripeCardErrors" style="color:#ff5050;font-size:0.8rem;margin-top:8px;"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-order-btn" id="submitOrderBtn">📦 Megrendelés elküldése</button>
+            </form>
+            <p style="color:var(--text-muted);font-size:0.75rem;text-align:center;margin-top:12px;">A megrendelés elküldése után e-mailben értesítést kapsz, és mi felvesszük veled a kapcsolatot.</p>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="container hero-content">
+            <div class="hero-badge">✦ Professzionális weboldal megoldások</div>
+            <h1>Weboldalak, amelyek <span>kiemelkednek</span> a tömegből</h1>
+            <p>Modern, reszponzív weboldalakat készítünk a legújabb technológiákkal. Növeld online jelenléted és érj el több ügyfelet.</p>
+            <div class="hero-buttons">
+                <a href="#pricing" class="btn btn-primary">Árak megtekintése →</a>
+                <a href="#services" class="btn btn-secondary">Tudj meg többet</a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <div class="scroll-indicator"><div class="scroll-dot"></div></div>
+            <span>Görgess le</span>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section" id="services">
+        <div class="container">
+            <div class="section-header fade-in">
+                <span class="section-label">Szolgáltatások</span>
+                <h2>Amit kínálunk</h2>
+                <p>Teljes körű weboldal megoldások a tervezéstől a karbantartásig.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <div class="service-icon">🎨</div>
+                    <h3>Egyedi Design</h3>
+                    <p>Modern, letisztult és egyedi dizájn, ami tökéletesen tükrözi a márkád identitását és céljait.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">⚡</div>
+                    <h3>Gyors Teljesítmény</h3>
+                    <p>Optimalizált, gyorsan betöltő weboldalak, amelyek kiváló felhasználói élményt nyújtanak.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">📱</div>
+                    <h3>Reszponzív Kialakítás</h3>
+                    <p>Tökéletes megjelenés minden eszközön - asztali géptől a mobiltelefonig.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section pricing" id="pricing">
+        <div class="container">
+            <div class="section-header fade-in">
+                <span class="section-label">Árazás</span>
+                <h2>Csomagjaink</h2>
+                <p>Válaszd ki a számodra legmegfelelőbb csomagot. Minden csomag tartalmazza a szükséges alapfunkciókat.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in">
+                    <div class="pricing-name">Alap</div>
+                    <div class="pricing-price"><span class="currency">Ft</span>29 999</div>
+                    <div class="pricing-desc">Tökéletes induló vállalkozásoknak és személyes projektekhez.</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> 1 oldalas weboldal</li>
+                        <li><span class="check">✓</span> Reszponzív design</li>
+                        <li><span class="check">✓</span> Alap SEO beállítások</li>
+                        <li><span class="check">✓</span> Kapcsolati űrlap</li>
+                        <li class="disabled"><span class="check">✕</span> Admin felület</li>
+                        <li class="disabled"><span class="check">✕</span> 3 hónap karbantartás</li>
+                        <li class="disabled"><span class="check">✕</span> Domain+Hosting 1 év</li>
+                    </ul>
+                    <button class="pricing-btn" onclick="addToCart('Alap', 29999)">Kosárba</button>
+                </div>
+                <div class="pricing-card featured fade-in">
+                    <span class="pricing-badge">Legnépszerűbb</span>
+                    <div class="pricing-name">Profi</div>
+                    <div class="pricing-price"><span class="currency">Ft</span>69 999</div>
+                    <div class="pricing-desc">Ideális választás növekvő vállalkozások számára.</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Akár 5 oldalas weboldal</li>
+                        <li><span class="check">✓</span> Reszponzív design</li>
+                        <li><span class="check">✓</span> Haladó SEO beállítások</li>
+                        <li><span class="check">✓</span> Kapcsolati űrlap</li>
+                        <li><span class="check">✓</span> Admin felület</li>
+                        <li><span class="check">✓</span> 3 hónap karbantartás</li>
+                        <li class="disabled"><span class="check">✕</span> Domain+Hosting 1 év</li>
+                    </ul>
+                    <button class="pricing-btn" onclick="addToCart('Profi', 69999)">Kosárba</button>
+                </div>
+                <div class="pricing-card fade-in">
+                    <div class="pricing-name">Prémium</div>
+                    <div class="pricing-price"><span class="currency">Ft</span>119 999</div>
+                    <div class="pricing-desc">Teljes körű megoldás nagyobb projektekhez és cégeknek.</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Korlátlan oldalszám</li>
+                        <li><span class="check">✓</span> Reszponzív design</li>
+                        <li><span class="check">✓</span> Haladó SEO beállítások</li>
+                        <li><span class="check">✓</span> Kapcsolati űrlap</li>
+                        <li><span class="check">✓</span> Admin felület</li>
+                        <li><span class="check">✓</span> 12 hónap karbantartás</li>
+                        <li><span class="check">✓</span> Domain+Hosting 1 év</li>
+                    </ul>
+                    <button class="pricing-btn" onclick="addToCart('Prémium', 119999)">Kosárba</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="cta-box fade-in">
+                <h2>Készen állsz a fejlődésre?</h2>
+                <p>Vedd fel velünk a kapcsolatot és segítünk kiválasztani a számodra legmegfelelőbb csomagot!</p>
+                <a href="mailto:paszti.roland11@gmail.com" class="btn btn-primary">Kapcsolatfelvétel →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 DevCore. Minden jog fenntartva.</p>
+            <ul class="footer-links">
+                <li><a href="#services">Szolgáltatások</a></li>
+                <li><a href="#pricing">Árazás</a></li>
+                <li><a href="mailto:paszti.roland11@gmail.com">Kapcsolat</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- JS at the end with defer-like behavior -->
+    <script>
+        // ===== EMAILJS CONFIG =====
+        // Cseréld ki a saját EmailJS adataidra: https://www.emailjs.com/
+        const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+        const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+        const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+        const OWNER_EMAIL = 'paszti.roland11@gmail.com';
+
+        let stripe = null;
+        let stripeCard = null;
+        let stripeSetup = false;
+
+        // ===== CART =====
+        let cart = [];
+
+        function addToCart(name, price) {
+            const existing = cart.find(item => item.name === name);
+            if (existing) { existing.qty += 1; }
+            else { cart.push({ name, price, qty: 1 }); }
+            updateCartUI();
+            showToast(`${name} csomag a kosárba téve!`, 'success');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').textContent = count;
+            const body = document.getElementById('cartBody');
+            const footer = document.getElementById('cartFooter');
+            const totalSpan = document.getElementById('cartTotalPrice');
+
+            if (cart.length === 0) {
+                body.innerHTML = '<div class="cart-empty">A kosár üres.<br>Válassz egy csomagot!</div>';
+                footer.style.display = 'none';
+                return;
+            }
+            let html = '';
+            let total = 0;
+            cart.forEach((item, i) => {
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+                html += `<div class="cart-item"><div class="cart-item-info"><h4>${item.name} csomag</h4><p>${item.qty}× ${item.price.toLocaleString('hu-HU')} Ft</p></div><button class="cart-item-remove" onclick="removeFromCart(${i})">✕</button></div>`;
+            });
+            body.innerHTML = html;
+            totalSpan.textContent = total.toLocaleString('hu-HU') + ' Ft';
+            footer.style.display = 'block';
+        }
+
+        // ===== CART DRAWER =====
+        const cartToggle = document.getElementById('cartToggle');
+        const cartDrawer = document.getElementById('cartDrawer');
+        const cartOverlay = document.getElementById('cartOverlay');
+        const cartClose = document.getElementById('cartClose');
+
+        function openCart() { cartDrawer.classList.add('open'); cartOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+        function closeCart() { cartDrawer.classList.remove('open'); cartOverlay.classList.remove('open'); document.body.style.overflow = ''; }
+
+        cartToggle.addEventListener('click', openCart);
+        cartClose.addEventListener('click', closeCart);
+        cartOverlay.addEventListener('click', closeCart);
+
+        document.getElementById('checkoutBtn').addEventListener('click', () => {
+            if (cart.length === 0) return;
+            closeCart();
+            setTimeout(() => openQuestionnaire(), 400);
+        });
+
+        // ===== QUESTIONNAIRE =====
+        const qOverlay = document.getElementById('questionnaireOverlay');
+        const closeQ = document.getElementById('closeQuestionnaire');
+
+        function openQuestionnaire() {
+            const summary = document.getElementById('orderSummary');
+            let html = '';
+            let total = 0;
+            cart.forEach(item => { const t = item.price * item.qty; total += t; html += `<div>• ${item.name} × ${item.qty} = ${t.toLocaleString('hu-HU')} Ft</div>`; });
+            html += `<div style="margin-top:8px;font-weight:700;color:var(--primary-light);">Összesen: ${total.toLocaleString('hu-HU')} Ft</div>`;
+            summary.innerHTML = html;
+            qOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        closeQ.addEventListener('click', () => { qOverlay.classList.remove('open'); document.body.style.overflow = ''; });
+        qOverlay.addEventListener('click', (e) => { if (e.target === qOverlay) { qOverlay.classList.remove('open'); document.body.style.overflow = ''; } });
+
+        // ===== STRIPE =====
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_TYooMQauvdEDq54NiTphI7jx';
+
+        function initStripe() {
+            if (stripeSetup || typeof Stripe === 'undefined') return;
+            try {
+                stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+                const elements = stripe.elements();
+                stripeCard = elements.create('card', {
+                    style: { base: { color: '#E8E8F0', fontFamily: '"Inter", sans-serif', fontSize: '15px', '::placeholder': { color: '#9A9AB0' } }, invalid: { color: '#ff5050' } },
+                    hidePostalCode: true
+                });
+                stripeCard.mount('#stripeCardElement');
+                stripeCard.addEventListener('change', (event) => {
+                    document.getElementById('stripeCardErrors').textContent = event.error ? event.error.message : '';
+                });
+                stripeSetup = true;
+            } catch(e) { console.error('Stripe init error:', e); }
+        }
+
+        // ===== PAYMENT OPTIONS =====
+        document.querySelectorAll('.payment-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.payment-option').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('paymentInput').value = btn.dataset.value;
+                const stripeSection = document.getElementById('stripePaymentSection');
+                if (btn.dataset.value === 'Kártya (Stripe)') {
+                    stripeSection.style.display = 'block';
+                    if (!stripeSetup && typeof Stripe !== 'undefined') initStripe();
+                } else {
+                    stripeSection.style.display = 'none';
+                }
+            });
+        });
+
+        // ===== FORM SUBMIT =====
+        document.getElementById('orderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitOrderBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Küldés...';
+
+            const formData = new FormData(this);
+            let cartSummary = '';
+            let totalPrice = 0;
+            cart.forEach(item => { const t = item.price * item.qty; totalPrice += t; cartSummary += `${item.name} × ${item.qty} = ${t.toLocaleString('hu-HU')} Ft\n`; });
+
+            const features = [];
+            document.querySelectorAll('input[name="features"]:checked').forEach(cb => features.push(cb.value));
+
+            const data = {
+                to_email: OWNER_EMAIL,
+                from_name: formData.get('name'),
+                from_email: formData.get('email'),
+                phone: formData.get('phone') || 'Nem adott meg',
+                website_type: formData.get('type'),
+                pages: formData.get('pages'),
+                style: formData.get('style'),
+                colors: formData.get('colors') || 'Nincs megadva',
+                features: features.length > 0 ? features.join(', ') : 'Nincs kiválasztva',
+                notes: formData.get('notes') || 'Nincs',
+                payment: formData.get('payment') || 'Nincs kiválasztva',
+                cart_summary: cartSummary,
+                total_price: totalPrice.toLocaleString('hu-HU') + ' Ft'
+            };
+
+            try {
+                if (typeof emailjs === 'undefined') throw new Error('EmailJS nincs betöltve. Ellenőrizd az internetkapcsolatot!');
+
+                // Stripe token generálás kártyás fizetés esetén
+                if (formData.get('payment') === 'Kártya (Stripe)' && stripeCard) {
+                    const { token, error } = await stripe.createToken(stripeCard);
+                    if (error) throw new Error('Stripe hiba: ' + error.message);
+                    data.stripe_token = token.id;
+                }
+
+                const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, data);
+                if (response.status === 200) {
+                    showToast('✅ Megrendelés sikeresen elküldve! Hamarosan felvesszük a kapcsolatot.', 'success');
+                    qOverlay.classList.remove('open');
+                    document.body.style.overflow = '';
+                    cart = [];
+                    updateCartUI();
+                    this.reset();
+                    document.querySelectorAll('.payment-option').forEach(b => b.classList.remove('active'));
+                    document.getElementById('stripePaymentSection').style.display = 'none';
+                } else {
+                    throw new Error('Hiba történt a küldés során');
+                }
+            } catch(err) {
+                console.error('Submit error:', err);
+                showToast('❌ ' + (err.message || 'Hiba történt. Kérlek próbáld újra!'), 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📦 Megrendelés elküldése';
+            }
+        });
+
+        // ===== TOAST =====
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // ===== MOBILE NAV =====
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => { navToggle.classList.toggle('active'); navLinks.classList.toggle('open'); });
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => { navToggle.classList.remove('active'); navLinks.classList.remove('open'); });
+        });
+
+        // ===== NAVBAR SCROLL =====
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); }, { passive: true });
+
+        // ===== SCROLL ANIMATIONS =====
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const delay = parseInt(entry.target.dataset.delay) || 0;
+                    setTimeout(() => entry.target.classList.add('visible'), delay);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        fadeElements.forEach((el, i) => { el.dataset.delay = i * 100; observer.observe(el); });
+
+        // ===== CARDS OBSERVER =====
+        const cards = document.querySelectorAll('.pricing-card, .service-card');
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), index * 120);
+                    cardObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        cards.forEach(card => cardObserver.observe(card));
+
+        // ===== PARALLAX =====
+        const orbs = document.querySelectorAll('.bg-orb');
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            orbs.forEach((orb, i) => {
+                const speed = (i + 1) * 0.3;
+                orb.style.transform = orb.style.transform.replace(/translate\([^)]+\)/, `translate(${x * speed}px, ${y * speed}px)`);
+            });
+        }, { passive: true });
+
+        console.log('DevCore betöltve!');
+    </script>
+</body>
+</html>
+
